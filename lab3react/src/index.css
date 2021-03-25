@@ -1,13 +1,78 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+
+.result,
+button,
+.calculator-body,
+.button_narrow,
+.button_plus {
+  border-style: solid;
+  border-color: black;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.result {
+  display: block;
+  text-align: center;
+  margin-bottom: 20px;
+  height: 75px;
+  background: #DFE3D8;
+  border-radius: 10px;
+}
+
+.result p {
+  font-size: 40px;
+  margin: 5px;
+}
+
+.calculator-body {
+  margin: 100px auto auto auto;
+  display: block;
+  width: 375px;
+  background: linear-gradient(180deg, #4ea4dc 51.6%, #081925 161.2%);
+  overflow: hidden;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.wrapper {
+  display: block;
+  margin: 65px 22px 22px 22px;
+  text-align: center;
+}
+
+button {
+  width: 72px;
+  height: 50px;
+  font-size: 24px;
+  background: linear-gradient(0deg, #4ea4dc -547.1%, #2bafde 269.8%);
+  color: #ffffff;
+  font-weight: bold;
+  border-radius: 10px;
+  margin: 5px 5px 5px 5px;
+}
+
+.button_narrow {
+  height: 40px;
+}
+
+.btn_field {
+  display: flex;
+  text-align: center;
+  /* padding: 10px; */
+  /* background: linear-gradient(180deg, #4EA4DC 51.6%, #081925 161.2%); */
+}
+
+.button_plus {
+  height: 110px;
+  font-size: 26px;
+  background: linear-gradient(0deg, #4ea4dc -547.1%, #2bafde 269.8%);
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.left_block{
+	float: left;
+}
+
+.right_block{
+	float: right;
 }
