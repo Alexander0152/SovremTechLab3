@@ -9,12 +9,22 @@ class App extends Component {
     this.state = {
       result: ""
     }
-    this.temp = '';
+    this.wholeExpression = '';
+    this.memory = 0;
+    this.lastClickIsMemory = false;
+    this.clearMemory = false;
   }
 
   onClick = button => {
 
-    const lastSymbol = this.temp.slice(-1);
+    if (button === 'MRC') {
+      this.lastClickIsMemory === true ? this.clearMemory = true : this.clearMemory = false;
+    }
+    this.lastClickIsMemory === true ? this.lastClickIsMemory = false : this.lastClickIsMemory = true;
+
+    button === 'MRC' ? this.lastClickIsMemory = true : this.lastClickIsMemory = false;
+
+    const lastSymbol = this.wholeExpression.slice(-1);
     if (this.checkIsDigit(button) || button === '.') {
 
       if (this.state.result.length + 1 <= 10) {
@@ -22,50 +32,59 @@ class App extends Component {
           this.setState({
             result: this.state.result + button,
           })
-          this.temp += button;
+          this.wholeExpression += button;
         }
         else {
           this.setState({
             result: button,
           })
-          this.temp += button;
+          this.wholeExpression += button;
         }
       }
       else if (this.checkIsSign(lastSymbol)) {
         this.setState({
           result: button,
         })
-        this.temp += button;
+        this.wholeExpression += button;
       }
     }
 
-    if (this.checkIsSign(button) && this.state.temp !== '' && !this.checkIsSign(lastSymbol)) {
+    if (this.checkIsSign(button) && this.state.wholeExpression !== '' && !this.checkIsSign(lastSymbol)) {
 
-      if (this.temp.includes('+') || this.temp.includes('-') || this.temp.includes('/') || this.temp.includes('*')) {
-        this.calculateTemp();
+      if (this.wholeExpression.includes('+') || this.wholeExpression.includes('-') ||
+        this.wholeExpression.includes('/') || this.wholeExpression.includes('*')) {
+        this.calculateWholeExpression();
       }
-      this.temp += button;
+      this.wholeExpression += button;
       this.setState({
-        result: this.temp
+        result: this.wholeExpression
       })
     }
 
     switch (button) {
       case '=':
-        //alert(this.temp);
         this.calculate();
         break;
       case 'OFF':
         this.reset();
         break;
       case '+/-':
-        alert("puk");
+        this.reverseSign();
         break;
       case '%':
-        alert("%");
+        this.getPercentage();
         break;
       case 'sqrt':
-        alert("sqrt");
+        this.getSqrt();
+        break;
+      case 'MRC':
+        this.showMemory();
+        break;
+      case 'M-':
+        this.subtractFromMemory();
+        break;
+      case 'M+':
+        this.addToMemory();
         break;
       default:
       // this.setState({
@@ -76,55 +95,150 @@ class App extends Component {
 
 
   calculate = () => {
-    this.calculateTemp();
+    this.calculateWholeExpression();
     try {
-      if (this.temp * 1 > 100000000) {
-        this.temp = (1 * this.temp).toPrecision(6);
+      if (this.wholeExpression * 1 > 100000000) {
+        this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + "";
       }
       this.setState({
-        result: this.temp
+        result: this.wholeExpression
       })
 
     } catch (e) {
-      this.setState({
-        result: "error"
-      })
-      this.temp = '';
+      this.setError();
     }
   };
 
-  calculateTemp = () => {
-    let checkResult = ''
-    if (this.temp.includes('--')) {
-      checkResult = this.temp.replace('--', '+')
+  calculateWholeExpression = () => {
+    let checkResult = '';
+    if (this.wholeExpression.includes('--')) {
+      checkResult = this.wholeExpression.replace('--', '+');
     }
-    if (this.temp.includes('ghyghj')) {//////////////
-      checkResult = this.temp.replace('+/-', '')
+    else if (this.wholeExpression.includes('ghyghj')) {////////////
+      checkResult = this.wholeExpression.replace('+/-', '')
     }
     else {
-      checkResult = this.temp
+      checkResult = this.wholeExpression
     }
 
     try {
-      this.temp = (eval(checkResult) || "") + "";
-      this.temp = (1 * this.temp).toPrecision(6);
+      this.wholeExpression = (eval(checkResult) || "");
+      this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + "";
 
     } catch (e) {
-      this.temp = 'error';
+      this.setError();
+      this.wholeExpression = 'error'
     }
+  };
+
+  reverseSign = () => {
+    const lastSymbol = this.wholeExpression.slice(-1);
+    if (this.checkIsSign(lastSymbol)) {
+      return;
+    }
+    if (this.wholeExpression === this.state.result) {
+      this.wholeExpression = ((-1) * this.wholeExpression).toPrecision(6) + ""
+      this.setState({
+        result: this.wholeExpression
+      })
+    }
+    else {
+      const currentResult = this.state.result;
+      this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), (-1) * currentResult + "");
+      this.setState({
+        result: (-1) * currentResult + ""
+      })
+    }
+  };
+
+  getSqrt = () => {
+    const lastSymbol = this.wholeExpression.slice(-1);
+    if (this.checkIsSign(lastSymbol)) {
+      this.setError();
+    }
+    if (this.wholeExpression === this.state.result) {
+      this.wholeExpression = Math.sqrt((1 * this.wholeExpression)).toPrecision(6) + ""
+      if (isNaN(this.wholeExpression)) {
+        this.setError();
+        return;
+      }
+      this.setState({
+        result: this.wholeExpression
+      })
+    }
+    else {
+      const currentResult = this.state.result;
+      let sqrt = Math.sqrt((1 * currentResult)).toPrecision(6) + "";
+      if (isNaN(sqrt)) {
+        this.setError();
+        return;
+      }
+      this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), sqrt);
+      this.setState({
+        result: sqrt
+      })
+    }
+  };
+
+  getPercentage = () => {
+    const lastSymbol = this.wholeExpression.slice(-1);
+    if (this.checkIsSign(lastSymbol) || this.wholeExpression === this.state.result ||
+      this.state.result === 'error') {
+      this.setError();
+      return;
+    }
+    const currentResult = this.state.result;
+    const originalNumber = this.wholeExpression.substring(0, this.wholeExpression.length - (currentResult.length + 1));
+    const percentege = (originalNumber * currentResult / 100).toPrecision(6) + "";
+    this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), percentege);
+    this.setState({
+      result: percentege
+    })
+  };
+
+  addToMemory = () => {
+    const lastSymbol = this.wholeExpression.slice(-1);
+    if (this.checkIsSign(lastSymbol) || this.state.result === 'error') {
+      this.setError();
+      return;
+    }
+    this.memory = (1*this.memory + 1 * this.state.result).toPrecision(6);
+  };
+
+  subtractFromMemory = () => {
+    const lastSymbol = this.wholeExpression.slice(-1);
+    if (this.checkIsSign(lastSymbol) || this.state.result === 'error') {
+      this.setError();
+      return;
+    }
+    this.memory = (1*this.memory - 1 * this.state.result).toPrecision(6);
+  };
+
+  showMemory = () => {
+    if (this.clearMemory) {
+      this.memory = 0;
+      this.setState({
+        result: '0'
+      })
+      return;
+    }
+    this.setState({
+      result: this.memory
+    })
   };
 
   reset = () => {
     this.setState({
-      result: "",
+      result: '',
     })
-    this.temp = '';
+    this.wholeExpression = '';
   };
 
-  backspace = () => {
-    alert(this.temp);
-    this.temp = this.temp.slice(0, -1);
-    alert(this.temp);
+  setError = () => {
+    this.wholeExpression = ''
+    this.setState({
+      result: 'error'
+    })
   };
 
   checkIsDigit = (symbol) => {
@@ -156,19 +270,6 @@ class App extends Component {
 export default App;
 
 
-  // changeLastOperation = (button) => {
-  //   const lastSymbol = this.temp.slice(-1);
-  //   if (this.checkIsSign(lastSymbol)) {
-  //     this.backspace();
-  //     this.temp += button;
-  //     this.setState({
-  //       result: this.temp,
-  //     })
-  //   }
-  //   else {
-  //     this.temp += button;
-  //     this.setState({
-  //       result: this.temp
-  //     })
-  //   }
-  // };
+// MRC кнопка для отображения или стирания (при повторном нажатии) содержимого памяти 
+// M+ занести значение в память (если там ничего нет) или добавить то, что на экране к содержимому памяти (результат сложения сохраняется в памяти) 
+// M- вычесть то, что на экране, из содержимого памяти (результат вычитания сохраняется в памяти) 
