@@ -7,7 +7,7 @@ class App extends Component {
     super();
 
     this.state = {
-      result: ""
+      result: ''
     }
     this.wholeExpression = '';
     this.memory = 0;
@@ -87,18 +87,15 @@ class App extends Component {
         this.addToMemory();
         break;
       default:
-      // this.setState({
-      //   result: this.state.result + button
-      // })
+        break;
     }
   };
-
 
   calculate = () => {
     this.calculateWholeExpression();
     try {
       if (this.wholeExpression * 1 > 100000000) {
-        this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + "";
+        this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + '';
       }
       this.setState({
         result: this.wholeExpression
@@ -114,16 +111,13 @@ class App extends Component {
     if (this.wholeExpression.includes('--')) {
       checkResult = this.wholeExpression.replace('--', '+');
     }
-    else if (this.wholeExpression.includes('ghyghj')) {////////////
-      checkResult = this.wholeExpression.replace('+/-', '')
-    }
     else {
       checkResult = this.wholeExpression
     }
 
     try {
-      this.wholeExpression = (eval(checkResult) || "");
-      this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + "";
+      this.wholeExpression = (eval(checkResult) || '');
+      this.wholeExpression = (1 * this.wholeExpression).toPrecision(6) + '';
 
     } catch (e) {
       this.setError();
@@ -137,16 +131,16 @@ class App extends Component {
       return;
     }
     if (this.wholeExpression === this.state.result) {
-      this.wholeExpression = ((-1) * this.wholeExpression).toPrecision(6) + ""
+      this.wholeExpression = ((-1) * this.wholeExpression).toPrecision(6) + ''
       this.setState({
         result: this.wholeExpression
       })
     }
     else {
       const currentResult = this.state.result;
-      this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), (-1) * currentResult + "");
+      this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), (-1) * currentResult + '');
       this.setState({
-        result: (-1) * currentResult + ""
+        result: (-1) * currentResult + ''
       })
     }
   };
@@ -157,7 +151,7 @@ class App extends Component {
       this.setError();
     }
     if (this.wholeExpression === this.state.result) {
-      this.wholeExpression = Math.sqrt((1 * this.wholeExpression)).toPrecision(6) + ""
+      this.wholeExpression = Math.sqrt((1 * this.wholeExpression)).toPrecision(6) + ''
       if (isNaN(this.wholeExpression)) {
         this.setError();
         return;
@@ -168,7 +162,7 @@ class App extends Component {
     }
     else {
       const currentResult = this.state.result;
-      let sqrt = Math.sqrt((1 * currentResult)).toPrecision(6) + "";
+      let sqrt = Math.sqrt((1 * currentResult)).toPrecision(6) + '';
       if (isNaN(sqrt)) {
         this.setError();
         return;
@@ -189,7 +183,7 @@ class App extends Component {
     }
     const currentResult = this.state.result;
     const originalNumber = this.wholeExpression.substring(0, this.wholeExpression.length - (currentResult.length + 1));
-    const percentege = (originalNumber * currentResult / 100).toPrecision(6) + "";
+    const percentege = (originalNumber * currentResult / 100).toPrecision(6) + '';
     this.wholeExpression = this.wholeExpression.replace(new RegExp(currentResult + '$'), percentege);
     this.setState({
       result: percentege
@@ -202,7 +196,7 @@ class App extends Component {
       this.setError();
       return;
     }
-    this.memory = (1*this.memory + 1 * this.state.result).toPrecision(6);
+    this.memory = (1 * this.memory + 1 * this.state.result).toPrecision(6);
   };
 
   subtractFromMemory = () => {
@@ -211,7 +205,7 @@ class App extends Component {
       this.setError();
       return;
     }
-    this.memory = (1*this.memory - 1 * this.state.result).toPrecision(6);
+    this.memory = (1 * this.memory - 1 * this.state.result).toPrecision(6);
   };
 
   showMemory = () => {
@@ -220,11 +214,13 @@ class App extends Component {
       this.setState({
         result: '0'
       })
+      this.wholeExpression = this.memory + ''
       return;
     }
     this.setState({
       result: this.memory
     })
+    this.wholeExpression = this.memory + ''
   };
 
   reset = () => {
